@@ -1,0 +1,32 @@
+2023-09-26 19:20:05.558 [info] Started initializing default profile extensions in extensions installation folder. file:///home/ericsan/.vscode/extensions
+2023-09-26 19:20:05.613 [warning] Failed to create default profile extensions manifest in extensions installation folder. file:///home/ericsan/.vscode/extensions Unable to create file 'vscode-userdata:/home/ericsan/.vscode/extensions/extensions.json' that already exists when overwrite flag is not set
+2023-09-26 19:20:05.613 [info] Completed initializing default profile extensions in extensions installation folder. file:///home/ericsan/.vscode/extensions
+2023-09-26 19:21:09.778 [info] Getting Manifest... vscodevim.vim
+2023-09-26 19:21:09.781 [info] Installing extension: vscodevim.vim
+2023-09-26 19:21:10.017 [warning] Extension signature verification failed with error 'UnknownError': vscodevim.vim
+2023-09-26 19:21:10.044 [info] Extracted extension to file:///home/ericsan/.vscode/extensions/vscodevim.vim-1.26.0: vscodevim.vim
+2023-09-26 19:21:10.051 [info] Renamed to /home/ericsan/.vscode/extensions/vscodevim.vim-1.26.0
+2023-09-26 19:21:10.051 [info] Extracting extension completed. vscodevim.vim
+2023-09-26 19:21:10.060 [info] Extension installed successfully: vscodevim.vim
+2023-09-26 19:21:42.207 [info] Getting Manifest... github.copilot
+2023-09-26 19:21:42.209 [info] Installing extension: github.copilot
+2023-09-26 19:21:42.362 [info] Getting Manifest... github.copilot-chat
+2023-09-26 19:21:42.399 [info] Installing extension: github.copilot-chat github.copilot
+2023-09-26 19:21:42.644 [warning] Extension signature verification failed with error 'UnknownError': github.copilot-chat
+2023-09-26 19:21:42.704 [info] Extracted extension to file:///home/ericsan/.vscode/extensions/github.copilot-chat-0.7.1: github.copilot-chat
+2023-09-26 19:21:42.711 [info] Renamed to /home/ericsan/.vscode/extensions/github.copilot-chat-0.7.1
+2023-09-26 19:21:42.711 [info] Extracting extension completed. github.copilot-chat
+2023-09-26 19:21:42.997 [warning] Extension signature verification failed with error 'UnknownError': github.copilot
+2023-09-26 19:21:43.073 [info] Extracted extension to file:///home/ericsan/.vscode/extensions/github.copilot-1.116.440: github.copilot
+2023-09-26 19:21:43.080 [info] Renamed to /home/ericsan/.vscode/extensions/github.copilot-1.116.440
+2023-09-26 19:21:43.080 [info] Extracting extension completed. github.copilot
+2023-09-26 19:21:43.089 [info] Extension installed successfully: github.copilot-chat
+2023-09-26 19:21:43.089 [info] Extension installed successfully: github.copilot
+2023-09-26 19:22:25.532 [info] Getting Manifest... github.copilot
+2023-09-26 19:22:25.544 [info] Installing extension: github.copilot
+2023-09-26 19:22:25.923 [warning] Extension signature verification failed with error 'UnknownError': github.copilot
+2023-09-26 19:22:26.021 [info] Extracted extension to file:///home/ericsan/.vscode/extensions/github.copilot-1.116.441: github.copilot
+2023-09-26 19:22:26.028 [info] Renamed to /home/ericsan/.vscode/extensions/github.copilot-1.116.441
+2023-09-26 19:22:26.028 [info] Extracting extension completed. github.copilot
+2023-09-26 19:22:26.037 [info] Extension installed successfully: github.copilot
+2023-09-26 19:22:26.038 [info] Marked extension as uninstalled github.copilot-1.116.440

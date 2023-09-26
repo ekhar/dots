@@ -1,0 +1,8 @@
+2023-09-26 19:20:04.928 [info] update#setState idle
+2023-09-26 19:20:34.923 [info] update#setState checking for updates
+2023-09-26 19:20:34.996 [info] update#setState idle
+2023-09-26 19:21:43.151 [error] Blocked vscode-webview request vscode-webview://1pct4e9lkd6k8rq29dpguuebl277ueh826uonov3scafrpm2bnhr/index.html?id=de30f0af-ad6a-4e3b-ac1c-613982f0940e&origin=de30f0af-ad6a-4e3b-ac1c-613982f0940e&swVersion=4&extensionId=&platform=electron&vscode-resource-base-authority=vscode-resource.vscode-cdn.net&parentOrigin=vscode-file%3A%2F%2Fvscode-app&disableServiceWorker=true
+2023-09-26 19:21:43.167 [error] CodeWindow: failed to load (reason: ERR_BLOCKED_BY_CLIENT, code: -20)
+2023-09-26 19:22:31.104 [error] [UtilityProcessWorker]: terminated unexpectedly with code 15, signal: unknown
+2023-09-26 19:22:31.104 [error] [UtilityProcess id: 1, type: fileWatcher, pid: 27757]: crashed with code 15 and reason 'killed'
+2023-09-26 19:22:36.104 [info] Extension host with pid 27786 exited with code: 0, signal: unknown.
