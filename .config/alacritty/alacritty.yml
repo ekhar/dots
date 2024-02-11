@@ -1,0 +1,28 @@
+# Alacritty configuration file
+# Window settings
+window:
+  # Window dimensions (changes require restart)
+  dimensions:
+    columns: 120
+    lines: 30
+
+# Font settings
+font:
+  # The size of the font
+  size: 10.0
+
+key_bindings:
+  # Enter Vi mode
+  - { key: V, mods: Control|Shift, action: ToggleViMode }
+
+# Vi mode key bindings
+  - { key: J, mods: Control, mode: Vi, action: ScrollLineDown }
+  - { key: K, mods: Control, mode: Vi, action: ScrollLineUp }
+  - { key: U, mods: Control, mode: Vi, action: ScrollPageUp }
+  - { key: D, mods: Control, mode: Vi, action: ScrollPageDown }
+  - { key: C, mods: Control, mode: Vi, action: Copy }
+  - { key: V, mods: None, mode: Vi, action: ToggleNormalSelection }
+  - { key: V, mods: Shift, mode: Vi, action: ToggleLineSelection }
+  - { key: V, mods: Control, mode: Vi, action: ToggleBlockSelection }
+  - { key: C, mods: Shift, mode: Vi, action: ClearSelection }
+  - { key: Escape, mods: None, mode: Vi, action: ClearSelection }

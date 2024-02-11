@@ -1,0 +1,5 @@
+!alacritty/
+!rofi/
+!nvim/
+!spotifyd/
+!tmux/
