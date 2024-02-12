@@ -2,11 +2,6 @@
 size = 10.0
 
 [[keyboard.bindings]]
-action = "ToggleViMode"
-key = "V"
-mods = "Control|Shift"
-
-[[keyboard.bindings]]
 action = "ScrollLineDown"
 key = "J"
 mode = "Vi"
