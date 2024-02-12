@@ -4,7 +4,33 @@ local overrides = require("custom.configs.overrides")
 local plugins = {
   -- install dap
   {
-    "mfussenegger/nvim-dap",
+  "mfussenegger/nvim-dap",
+    dependencies = {
+      "leoluz/nvim-dap-go",
+      "rcarriga/nvim-dap-ui",
+      "tpope/vim-fugitive",
+    },
+    config = function()
+      require("dapui").setup()
+      local dap, dapui = require("dap"), require("dapui")
+
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+      require "plugins.configs.dap"
+    end,
+  },
+  {
+    "rcarriga/nvim-dap-ui",
   },
 
  {
@@ -20,18 +46,10 @@ local plugins = {
       require("core.utils").load_mappings("crates")
     end,
   },
-  {
-    "rust-lang/rust.vim",
-    ft = "rust",
-    init = function ()
-      vim.g.rustfmt_autosave = 1
-    end
-  },
-
 {
   'mrcjkb/rustaceanvim',
   version = '^4', -- Recommended
-  ft = { 'rust' },
+  ft = { 'rust'},
 },
   {
     "github/copilot.vim",
