@@ -2,6 +2,23 @@ local overrides = require("custom.configs.overrides")
 
 ---@type NvPluginSpec[]
 local plugins = {
+  {
+    "windwp/nvim-ts-autotag",
+    ft = {
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "html",
+      "svelte",
+      "vue",
+      "xml",
+    },
+    config = function()
+      require("nvim-ts-autotag").setup()
+    end
+  },
+  --
   -- install dap
   {
   "mfussenegger/nvim-dap",
