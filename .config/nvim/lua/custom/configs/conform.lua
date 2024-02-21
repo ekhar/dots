@@ -19,6 +19,7 @@ local options = {
     yaml = { "yamllint" },
     toml = { "tomllint" },
     markdown = { "prettier" },
+    typescript = {"prettier"},
 
 	},
 
