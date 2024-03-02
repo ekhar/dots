@@ -9,7 +9,22 @@ M.general = {
         require("conform").format()
       end,
       "formatting",
-    }
+    },
+    -- cycle through buffers
+    ["<C-l>"] = {
+      function()
+        require("nvchad.tabufline").tabuflineNext()
+      end,
+      "Goto next buffer",
+    },
+
+    ["<C-h>"] = {
+      function()
+        require("nvchad.tabufline").tabuflinePrev()
+      end,
+      "Goto prev buffer",
+    },
+
 
   },
   v = {
