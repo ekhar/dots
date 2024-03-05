@@ -11,18 +11,17 @@ M.general = {
       "formatting",
     },
     -- cycle through buffers
-    ["<C-l>"] = {
-      function()
-        require("nvchad.tabufline").tabuflineNext()
-      end,
-      "Goto next buffer",
-    },
-
     ["<C-h>"] = {
       function()
         require("nvchad.tabufline").tabuflinePrev()
       end,
       "Goto prev buffer",
+    },
+    ["<C-l>"] = {
+      function()
+        require("nvchad.tabufline").tabuflineNext()
+      end,
+      "Goto next buffer",
     },
 
 
