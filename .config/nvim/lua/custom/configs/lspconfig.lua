@@ -13,16 +13,16 @@ for _, lsp in ipairs(servers) do
   }
 end
 
-local cmp_nvim_lsp = require "cmp_nvim_lsp"
-
 lspconfig.clangd.setup {
-  on_attach = on_attach,
-  capabilities = cmp_nvim_lsp.default_capabilities(),
+  on_attach = function (client, bufnr)
+    client.server_capablities.signatureHelpProvider = false
+    on_attach(client, bufnr)
+  end,
+  capabilities = capabilities,
   cmd = {
     "clangd",
     "--offset-encoding=utf-16",
     "--suggest-missing-includes",
-    "--cross-file-rename",
   },
 }
 -- 
