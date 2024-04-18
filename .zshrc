@@ -110,8 +110,11 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-conf="/home/ericsan/.config/"
-nvim="/home/ericsan/.config/nvim/"
+eval $(thefuck --alias fk)
+eval $(thefuck --alias)
+eval "$(fzf --zsh)"
+
+alias ohmyzsh="eza --color=always --long --git --no-filesize --icons=always --notime --no-user --no-permissions"
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 # CTRL-/ to toggle small preview window to see the full command
 # CTRL-Y to copy the command into clipboard using pbcopy
