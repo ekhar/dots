@@ -133,3 +133,12 @@ export PATH="$PATH:$HOME/.cargo/bin"
 eval "$(zoxide init zsh)"
 alias cd="z"
 
+
+# bun completions
+[ -s "/home/ericsan/.bun/_bun" ] && source "/home/ericsan/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+PATH="$HOME/.config/emacs/bin:$PATH"
