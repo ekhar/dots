@@ -130,6 +130,22 @@ local plugins = {
 		end,
     lazy = false,
 	},
+  {
+    "JoosepAlviste/nvim-ts-context-commentstring",
+  },
+  {
+    "nvimtools/none-ls.nvim",
+    event = "VeryLazy",
+    opts = function()
+      return require("custom.configs.null-ls")
+    end,
+  },
+  {
+    'numToStr/Comment.nvim',
+    config = function()
+      return require("custom.configs.comment").setup()
+    end,
+  }
 
 	-- To make a plugin not be loaded
 	-- {

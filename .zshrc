@@ -142,3 +142,5 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 PATH="$HOME/.config/emacs/bin:$PATH"
+export TMUX_CONF="$HOME/.config/tmux/tmux.conf"
+alias tmux='tmux -f $TMUX_CONF'

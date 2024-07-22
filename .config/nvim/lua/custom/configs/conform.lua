@@ -5,9 +5,9 @@ local options = {
 	formatters_by_ft = {
 		lua = { "stylua" },
 
-		javascript = { "prettier" },
-		css = { "prettier" },
-		html = { "prettier" },
+		javascript = { "prettierd" },
+		css = { "prettierd" },
+		html = { "prettierd" },
 
 		sh = { "shfmt" },
     c = { "clang-format" },
@@ -18,8 +18,8 @@ local options = {
     json = { "json_tool" },
     yaml = { "yamllint" },
     toml = { "tomllint" },
-    markdown = { "prettier" },
-    typescript = {"prettier"},
+    markdown = { "prettierd" },
+    typescript = {"prettierd"},
 
 	},
 
@@ -28,7 +28,7 @@ local options = {
 
 	format_on_save = {
 	  -- These options will be passed to conform.format()
-	  timeout_ms = 10,
+	  -- timeout_ms = 50,
 	  lsp_fallback = true,
 	},
 }
