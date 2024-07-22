@@ -8,6 +8,9 @@ local options = {
 		javascript = { "prettierd" },
 		css = { "prettierd" },
 		html = { "prettierd" },
+    typescript = {"prettierd"},
+    typescriptreact = {"prettierd"},
+    javascriptreact = {"prettierd"},
 
 		sh = { "shfmt" },
     c = { "clang-format" },
@@ -19,7 +22,6 @@ local options = {
     yaml = { "yamllint" },
     toml = { "tomllint" },
     markdown = { "prettierd" },
-    typescript = {"prettierd"},
 
 	},
 
