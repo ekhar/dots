@@ -128,24 +128,24 @@ local plugins = {
 		config = function()
 			require("supermaven-nvim").setup({})
 		end,
-    lazy = false,
+		lazy = false,
 	},
-  {
-    "JoosepAlviste/nvim-ts-context-commentstring",
-  },
-  {
-    "nvimtools/none-ls.nvim",
-    event = "VeryLazy",
-    opts = function()
-      return require("custom.configs.null-ls")
-    end,
-  },
-  {
-    'numToStr/Comment.nvim',
-    config = function()
-      return require("custom.configs.comment").setup()
-    end,
-  }
+	{
+		"JoosepAlviste/nvim-ts-context-commentstring",
+	},
+	{
+		"nvimtools/none-ls.nvim",
+		event = "VeryLazy",
+		opts = function()
+			return require("custom.configs.null-ls")
+		end,
+	},
+	{
+		"numToStr/Comment.nvim",
+		opts = function()
+			return require("custom.configs.comment")
+		end,
+	},
 
 	-- To make a plugin not be loaded
 	-- {
