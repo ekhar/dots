@@ -106,18 +106,18 @@ local plugins = {
 	},
 
 	-- Install a plugin
-	{
-		"max397574/better-escape.nvim",
-		event = "InsertEnter",
-		config = function()
-			require("better_escape").setup()
-		end,
-	},
+	-- {
+	-- 	"max397574/better-escape.nvim",
+	-- 	event = "InsertEnter",
+	-- 	config = function()
+	-- 		require("better_escape").setup()
+	-- 	end,
+	-- },
 
 	{
 		"stevearc/conform.nvim",
 		--  for users those who want auto-save conform + lazyloading!
-		event = {"BufWritePre", "BufNewFile"},
+		event = { "BufWritePre", "BufNewFile" },
 		config = function()
 			require("custom.configs.conform")
 		end,
