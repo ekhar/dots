@@ -110,8 +110,8 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-eval $(thefuck --alias fk)
-eval $(thefuck --alias)
+# eval $(thefuck --alias fk)
+# eval $(thefuck --alias)
 eval "$(fzf --zsh)"
 
 alias ohmyzsh="eza --color=always --long --git --no-filesize --icons=always --notime --no-user --no-permissions"
