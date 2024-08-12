@@ -104,6 +104,11 @@ local plugins = {
 		"nvim-tree/nvim-tree.lua",
 		opts = overrides.nvimtree,
 	},
+	{
+		"Exafunction/codeium.vim",
+		event = "BufEnter",
+		require("custom.configs.codeium"),
+	},
 
 	-- Install a plugin
 	-- {
@@ -123,13 +128,13 @@ local plugins = {
 		end,
 	},
 
-	{
-		"supermaven-inc/supermaven-nvim",
-		config = function()
-			require("supermaven-nvim").setup({})
-		end,
-		lazy = false,
-	},
+	-- {
+	-- 	"supermaven-inc/supermaven-nvim",
+	-- 	config = function()
+	-- 		require("supermaven-nvim").setup({})
+	-- 	end,
+	-- 	lazy = false,
+	-- },
 	{
 		"JoosepAlviste/nvim-ts-context-commentstring",
 	},
