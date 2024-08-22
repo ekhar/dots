@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Directory containing wallpapers
-wallpaper_dir=~/Pictures/Wallpapers
+wallpaper_dir=~/.walls
 
 # Function to recursively find image files
 find_images() {
