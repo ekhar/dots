@@ -133,6 +133,9 @@ export PATH="$PATH:$HOME/.cargo/bin"
 eval "$(zoxide init zsh)"
 alias cd="z"
 
+alias k9s="k9s --kubeconfig /etc/rancher/k3s/k3s.yaml"
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
 
 # bun completions
 [ -s "/home/ericsan/.bun/_bun" ] && source "/home/ericsan/.bun/_bun"
@@ -144,3 +147,4 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 PATH="$HOME/.config/emacs/bin:$PATH"
 export TMUX_CONF="$HOME/.config/tmux/tmux.conf"
 alias tmux='tmux -f $TMUX_CONF'
+
