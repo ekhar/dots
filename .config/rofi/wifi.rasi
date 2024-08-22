@@ -7,7 +7,7 @@ configuration {
 @theme "nocturne"
 
 * {
-    font: "Ubuntu Nerd Font 20";
+    font: "Ubuntu Nerd Font 14";
 
     background-color:   transparent;
     text-color:         @fg0;
@@ -18,9 +18,10 @@ configuration {
 }
 
 window {
-    location: north;
-    y-offset: -30;
-    width:          400;
+    location: northeast;
+    y-offset: -32;
+    x-offset: -3;
+    width:          220;
     border-radius:  15px;
 
     border: 3px;
@@ -33,26 +34,25 @@ mainbox {
 }
 
 inputbar {
-    enabled:false;
+	enabled:false;
 }
 
 prompt {
-    enabled: false;
+	enabled: false;
 }
 
 listview {
     background-color:   transparent;
     margin:     1px 0 0;
-    columns:    6;
-    lines:      1;
+    columns:    1;
+    lines:      8;
     fixed-height: false;
 }
 
 element {
-    orientation: horizontal;
-    padding:        8px 18px;
+    padding:        8px 8px;
     spacing:        8px;
-    border-radius:  16px;
+    border-radius:  14px;
 }
 
 element normal urgent {
@@ -64,7 +64,7 @@ element normal active {
 }
 
 element selected normal, element selected active {
-    background-color:   @fg1;
+    background-color:   @fg2;
     text-color: @black;
 }
 
