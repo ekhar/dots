@@ -150,4 +150,3 @@ alias tmux='tmux -f $TMUX_CONF'
 alias ls='eza'
 
 alias cat='bat'
-
