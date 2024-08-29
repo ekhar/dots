@@ -1,86 +1,80 @@
-16:56:54 [info] [LOG SESSION] ---------- START ----------
-16:56:54 [info] [PluginFactory] loading plugins
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libgmedecoder.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libalsaout.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libmpris.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libnullout.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libstockencoders.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libtaglibreader.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libserver.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libhttpdatastream.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libopenmptdecoder.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libpipewireout.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libportaudioout.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libpulseout.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libsndioout.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libffmpegdecoder.so
-16:56:54 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libsupereqdsp.so
-16:56:55 [info] [PortAudioOut] Pa_Initialize() return code: 0
-16:56:55 [info] [PipeWireOut] shutdown started
-16:56:55 [info] [PipeWireOut] shutdown complete
-16:56:55 [warning] [PortAudioOut] Pa_AbortStream() return code: -9988
-16:56:55 [warning] [PortAudioOut] Pa_CloseStream() return code: -9988
-16:56:55 [info] [PortAudioOut] Pa_Terminate() return code: 0
-16:56:55 [info] [Indexer] indexer source -1303229654 running...
-16:56:55 [info] [Indexer] indexer source -1303229654 finished
-16:56:55 [info] [Indexer] indexer source 155697690 running...
-16:56:55 [info] [Indexer] indexer source 155697690 finished
-16:56:55 [info] [Indexer] scanning /home/ericsan/Music/
-16:56:55 [info] [Indexer] scan completed successfully
-16:56:55 [info] [Indexer] cleanup 1/2
-16:56:55 [info] [Indexer] cleanup 2/2
-16:56:55 [info] [Indexer] optimizing
-16:56:55 [info] [Indexer] done!
-16:56:55 [info] [LocalLibrary] query 'CategoryListQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'CategoryListQuery' running
-16:56:55 [info] [LocalLibrary] query 'CategoryListQuery' finished with status=4
-16:56:55 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' running
-16:56:55 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' finished with status=4
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' running
-16:56:55 [info] [LocalLibrary] query 'CategoryListQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' finished with status=4
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' running
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' finished with status=4
-16:56:55 [info] [LocalLibrary] query 'CategoryListQuery' running
-16:56:55 [info] [LocalLibrary] query 'CategoryListQuery' finished with status=4
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataQuery' running
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataQuery' finished with status=4
-16:56:55 [info] [GaplessTransport] starting track at /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:56:55 [info] [Player] new instance created
-16:56:55 [info] [GaplessTransport] stop
-16:56:55 [info] [Stream] opening /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:56:55 [info] [LocalFileStream] opening file: /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:56:55 [info] [ffmpegdecoder] parsing data stream...
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' running
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' finished with status=4
-16:56:55 [info] [ffmpegdecoder] found audio stream!
-16:56:55 [info] [ffmpegdecoder] resolved codec: MP3 (MPEG audio layer 3)
-16:56:55 [info] [Streams] found a decoder for /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' running
-16:56:55 [info] [LocalLibrary] query 'CategoryTrackListQuery' finished with status=4
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' enqueued
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' running
-16:56:55 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' finished with status=4
-16:56:57 [info] [GaplessTransport] starting track at /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:56:57 [info] [Player] new instance created
-16:56:57 [info] [GaplessTransport] stop
-16:56:57 [info] [Stream] opening /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:56:57 [info] [LocalFileStream] opening file: /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:56:57 [info] [ffmpegdecoder] parsing data stream...
-16:56:57 [info] [ffmpegdecoder] found audio stream!
-16:56:57 [info] [ffmpegdecoder] resolved codec: MP3 (MPEG audio layer 3)
-16:56:57 [info] [Streams] found a decoder for /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
-16:57:13 [info] [GaplessTransport] pause
-16:57:14 [info] [GaplessTransport] resume
-16:57:17 [info] [LocalLibrary] query 'MarkTrackPlayedQuery' enqueued
-16:57:17 [info] [LocalLibrary] query 'MarkTrackPlayedQuery' running
-16:57:17 [info] [LocalLibrary] query 'MarkTrackPlayedQuery' finished with status=4
-18:07:01 [info] [GaplessTransport] pause
-21:39:35 [info] [GaplessTransport] resume
-21:42:24 [info] [GaplessTransport] pause
+19:08:24 [info] [LOG SESSION] ---------- START ----------
+19:08:24 [info] [PluginFactory] loading plugins
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libgmedecoder.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libalsaout.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libmpris.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libnullout.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libstockencoders.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libtaglibreader.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libserver.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libhttpdatastream.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libopenmptdecoder.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libpipewireout.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libportaudioout.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libpulseout.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libsndioout.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libffmpegdecoder.so
+19:08:24 [info] [PluginFactory] loaded: /usr/share/musikcube/plugins/libsupereqdsp.so
+19:08:24 [info] [PortAudioOut] Pa_Initialize() return code: 0
+19:08:24 [info] [PipeWireOut] shutdown started
+19:08:24 [info] [PipeWireOut] shutdown complete
+19:08:24 [warning] [PortAudioOut] Pa_AbortStream() return code: -9988
+19:08:24 [warning] [PortAudioOut] Pa_CloseStream() return code: -9988
+19:08:24 [info] [PortAudioOut] Pa_Terminate() return code: 0
+19:08:24 [info] [Indexer] indexer source -1303229654 running...
+19:08:24 [info] [Indexer] indexer source -1303229654 finished
+19:08:24 [info] [Indexer] indexer source 155697690 running...
+19:08:24 [info] [Indexer] indexer source 155697690 finished
+19:08:24 [info] [Indexer] scanning /home/ericsan/Music/
+19:08:24 [info] [Indexer] scan completed successfully
+19:08:24 [info] [Indexer] cleanup 1/2
+19:08:24 [info] [Indexer] cleanup 2/2
+19:08:24 [info] [Indexer] optimizing
+19:08:24 [info] [LocalLibrary] query 'SearchTrackListQuery' enqueued
+19:08:24 [info] [Indexer] done!
+19:08:24 [info] [LocalLibrary] query 'SearchTrackListQuery' running
+19:08:24 [info] [LocalLibrary] query 'SearchTrackListQuery' finished with status=4
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' running
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' finished with status=4
+19:08:24 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' running
+19:08:24 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' finished with status=4
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' running
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' finished with status=4
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' running
+19:08:24 [info] [LocalLibrary] query 'CategoryListQuery' finished with status=4
+19:08:24 [info] [LocalLibrary] query 'TrackMetadataQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'TrackMetadataQuery' running
+19:08:24 [info] [LocalLibrary] query 'TrackMetadataQuery' finished with status=4
+19:08:24 [info] [GaplessTransport] starting track at /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
+19:08:24 [info] [Player] new instance created
+19:08:24 [info] [GaplessTransport] stop
+19:08:24 [info] [Stream] opening /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
+19:08:24 [info] [LocalFileStream] opening file: /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
+19:08:24 [info] [ffmpegdecoder] parsing data stream...
+19:08:24 [info] [LocalLibrary] query 'CategoryTrackListQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'CategoryTrackListQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'CategoryTrackListQuery' running
+19:08:24 [info] [LocalLibrary] query 'CategoryTrackListQuery' finished with status=4
+19:08:24 [info] [LocalLibrary] query 'CategoryTrackListQuery' running
+19:08:24 [info] [LocalLibrary] query 'CategoryTrackListQuery' finished with status=4
+19:08:24 [info] [ffmpegdecoder] found audio stream!
+19:08:24 [info] [ffmpegdecoder] resolved codec: MP3 (MPEG audio layer 3)
+19:08:24 [info] [Streams] found a decoder for /home/ericsan/Music/japanese_lofi/Japan All Night - LoFi Chill beats [ Relaxing ] [aybEkSxCbtk].mp3
+19:08:24 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' enqueued
+19:08:24 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' running
+19:08:24 [info] [LocalLibrary] query 'TrackMetadataBatchQuery' finished with status=4
+19:08:26 [info] [GaplessTransport] resume
+19:08:27 [info] [GaplessTransport] pause
+19:08:45 [info] [GaplessTransport] resume
+19:08:46 [info] [LocalLibrary] query 'MarkTrackPlayedQuery' enqueued
+19:08:46 [info] [LocalLibrary] query 'MarkTrackPlayedQuery' running
+19:08:46 [info] [LocalLibrary] query 'MarkTrackPlayedQuery' finished with status=4
+19:09:06 [info] [GaplessTransport] pause
+19:09:10 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' enqueued
+19:09:10 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' running
+19:09:10 [info] [LocalLibrary] query 'PersistedPlayQueueQuery' finished with status=4
+19:09:10 [info] [GaplessTransport] stop
