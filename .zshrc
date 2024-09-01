@@ -150,3 +150,11 @@ alias tmux='tmux -f $TMUX_CONF'
 alias ls='eza'
 
 alias cat='bat'
+
+
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+export DEVKITPRO=/opt/devkitpro
+export DEVKITARM=/opt/devkitpro/devkitARM
+export DEVKITPPC=/opt/devkitpro/devkitPPC
+source /opt/emsdk/emsdk_env.sh
