@@ -18,6 +18,7 @@ local servers = {
 	"dockerls",
 	"gopls",
 	"sqlls",
+	"svelte",
 	"tailwindcss",
 	"eslint",
 }
@@ -51,6 +52,18 @@ lspconfig.tsserver.setup({
 	on_attach = on_attach,
 	root_dir = lspconfig.util.root_pattern("package.json"),
 	single_file_support = false,
+})
+
+lspconfig.gopls.setup({
+	settings = {
+		gopls = {
+			buildFlags = { "-tags=js,wasm" },
+			env = {
+				GOARCH = "wasm",
+				GOOS = "js",
+			},
+		},
+	},
 })
 
 --
