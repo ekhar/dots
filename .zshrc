@@ -1,3 +1,4 @@
+pfetch
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -157,4 +158,6 @@ export PATH=$PATH:$GOPATH/bin
 export DEVKITPRO=/opt/devkitpro
 export DEVKITARM=/opt/devkitpro/devkitARM
 export DEVKITPPC=/opt/devkitpro/devkitPPC
-source /opt/emsdk/emsdk_env.sh
+# source /opt/emsdk/emsdk_env.sh
+#
+source ~/.env
