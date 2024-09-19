@@ -54,17 +54,17 @@ lspconfig.tsserver.setup({
 	single_file_support = false,
 })
 
-lspconfig.gopls.setup({
-	settings = {
-		gopls = {
-			buildFlags = { "-tags=js,wasm" },
-			env = {
-				GOARCH = "wasm",
-				GOOS = "js",
-			},
-		},
-	},
-})
+-- lspconfig.gopls.setup({
+-- 	settings = {
+-- 		gopls = {
+-- 			buildFlags = { "-tags=js,wasm" },
+-- 			env = {
+-- 				GOARCH = "wasm",
+-- 				GOOS = "js",
+-- 			},
+-- 		},
+-- 	},
+-- })
 
 --
 --

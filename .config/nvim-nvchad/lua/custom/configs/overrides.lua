@@ -32,8 +32,8 @@ M.mason = {
 		"html-lsp",
 		"typescript-language-server",
 		"prettierd",
-    "tailwindcss-language-server",
-    "eslint-lsp",
+		"tailwindcss-language-server",
+		"eslint-lsp",
 
 		-- c/cpp stuff
 		"clangd",
@@ -64,7 +64,7 @@ M.supermaven = {
 		clear_suggestion = "<C-]>",
 		accept_word = "<C-j>",
 	},
-	ignore_filetypes = { cpp = true },
+	-- ignore_filetypes = { cpp = true },
 	color = {
 		suggestion_color = "#ffffff",
 		cterm = 244,
