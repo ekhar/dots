@@ -161,3 +161,4 @@ export DEVKITPPC=/opt/devkitpro/devkitPPC
 # source /opt/emsdk/emsdk_env.sh
 #
 source ~/.env
+alias nano="nvim"
