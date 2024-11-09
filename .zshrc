@@ -162,3 +162,11 @@ export DEVKITPPC=/opt/devkitpro/devkitPPC
 #
 source ~/.env
 alias nano="nvim"
+
+# pnpm
+export PNPM_HOME="/home/ericsan/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
