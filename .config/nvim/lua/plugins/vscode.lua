@@ -16,7 +16,6 @@ local enabled = {
   "nvim-treesitter",
   "nvim-treesitter-textobjects",
   "nvim-ts-context-commentstring",
-  "snacks.nvim",
   "ts-comments.nvim",
   "vim-repeat",
   "yanky.nvim",
