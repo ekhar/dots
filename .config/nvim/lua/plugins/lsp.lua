@@ -4,17 +4,12 @@ return {
     opts = {
       servers = {
         denols = {
-          -- Modified root_dir to strictly respect deno.json boundaries
+          -- LSP workspace is scoped to Deno directories
           root_dir = function(fname)
             local util = require("lspconfig.util")
-            -- Find the closest deno.json/deno.jsonc from the current file
             local deno_root = util.root_pattern("deno.json", "deno.jsonc")(fname)
             if deno_root then
-              -- Only enable Deno LSP if we're within this directory tree
-              local relative_path = vim.fn.fnamemodify(fname, ":p"):sub(#deno_root + 1)
-              if relative_path:match("^[/\\]") then
-                return deno_root
-              end
+              return deno_root
             end
             return nil
           end,
@@ -35,15 +30,13 @@ return {
           },
         },
         vtsls = {
-          -- Modified root_dir to respect package.json but avoid Deno directories
+          -- LSP workspace scoped to non-Deno directories
           root_dir = function(fname)
             local util = require("lspconfig.util")
-            -- First check if we're in a Deno project
             local deno_root = util.root_pattern("deno.json", "deno.jsonc")(fname)
             if deno_root then
-              return nil -- Don't activate vtsls in Deno directories
+              return nil
             end
-            -- Otherwise, look for Node.js/TypeScript project markers
             return util.root_pattern("package.json", "tsconfig.json", "jsconfig.json")(fname)
           end,
           single_file_support = false,
