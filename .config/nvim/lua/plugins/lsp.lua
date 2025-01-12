@@ -3,12 +3,22 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        -- Deno LSP configuration
         denols = {
-          root_dir = require("lspconfig.util").root_pattern("deno.json", "deno.jsonc"),
-          -- Explicitly disable single file support
+          -- Modified root_dir to strictly respect deno.json boundaries
+          root_dir = function(fname)
+            local util = require("lspconfig.util")
+            -- Find the closest deno.json/deno.jsonc from the current file
+            local deno_root = util.root_pattern("deno.json", "deno.jsonc")(fname)
+            if deno_root then
+              -- Only enable Deno LSP if we're within this directory tree
+              local relative_path = vim.fn.fnamemodify(fname, ":p"):sub(#deno_root + 1)
+              if relative_path:match("^[/\\]") then
+                return deno_root
+              end
+            end
+            return nil
+          end,
           single_file_support = false,
-          -- Configure file types explicitly
           filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "json" },
           init_options = {
             lint = true,
@@ -24,13 +34,19 @@ return {
             },
           },
         },
-        -- TypeScript LSP configuration (vtsls in your case)
         vtsls = {
-          root_dir = require("lspconfig.util").root_pattern("package.json", "tsconfig.json", "jsconfig.json"),
+          -- Modified root_dir to respect package.json but avoid Deno directories
+          root_dir = function(fname)
+            local util = require("lspconfig.util")
+            -- First check if we're in a Deno project
+            local deno_root = util.root_pattern("deno.json", "deno.jsonc")(fname)
+            if deno_root then
+              return nil -- Don't activate vtsls in Deno directories
+            end
+            -- Otherwise, look for Node.js/TypeScript project markers
+            return util.root_pattern("package.json", "tsconfig.json", "jsconfig.json")(fname)
+          end,
           single_file_support = false,
-          -- Ensure TypeScript tools don't activate in Deno projects
-          root_markers = { "package.json", "tsconfig.json", "jsconfig.json" },
-          -- Configure file types explicitly
           filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact" },
         },
       },
