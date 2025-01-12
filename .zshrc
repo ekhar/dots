@@ -150,9 +150,6 @@ export TMUX_CONF="$HOME/.config/tmux/tmux.conf"
 alias tmux='tmux -f $TMUX_CONF'
 alias ls='eza'
 
-alias cat='bat'
-
-
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 export DEVKITPRO=/opt/devkitpro
