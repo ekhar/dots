@@ -1,3 +1,4 @@
+-- filename: .config/nvim/lua/plugins/lsp.lua
 local nvim_lsp = require("lspconfig")
 
 return {
