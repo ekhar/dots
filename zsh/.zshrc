@@ -1,9 +1,25 @@
+# Platform detection (must be early)
+case "$(uname -s)" in
+    Darwin) DOTFILES_OS="macos" ;;
+    Linux)  DOTFILES_OS="linux" ;;
+esac
+export DOTFILES_OS
+
 # pfetch must be BEFORE instant prompt (it outputs to console)
-pfetch
+command -v pfetch &>/dev/null && pfetch
 
 # Powerlevel10k instant prompt (must be after any console output)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Homebrew setup (macOS - must be early for brew --prefix to work)
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+    if [[ -f /opt/homebrew/bin/brew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    elif [[ -f /usr/local/bin/brew ]]; then
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
 fi
 
 # History configuration
@@ -21,7 +37,14 @@ setopt EXTENDED_HISTORY
 typeset -U PATH
 export GOPATH="$HOME/go"
 export BUN_INSTALL="$HOME/.bun"
-export PNPM_HOME="$HOME/Library/pnpm"
+
+# Platform-specific PNPM path
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+    export PNPM_HOME="$HOME/Library/pnpm"
+else
+    export PNPM_HOME="$HOME/.local/share/pnpm"
+fi
+
 path=(
   "$HOME/.local/bin"
   "$HOME/.config/emacs/bin"
@@ -37,11 +60,13 @@ path=(
 export ZSH="$HOME/.oh-my-zsh"
 export EDITOR="nvim"
 export TMUX_CONF="$HOME/.config/tmux/tmux.conf"
-export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
 export DEVKITPRO="/opt/devkitpro"
 export DEVKITARM="/opt/devkitpro/devkitARM"
 export DEVKITPPC="/opt/devkitpro/devkitPPC"
 unset DOCKER_HOST
+
+# Kubeconfig (only if k3s exists)
+[[ -f /etc/rancher/k3s/k3s.yaml ]] && export KUBECONFIG="/etc/rancher/k3s/k3s.yaml"
 
 # Oh-my-zsh
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -49,23 +74,47 @@ plugins=(git vi-mode)
 source $ZSH/oh-my-zsh.sh
 
 # Tool initializations
-eval "$(fzf --zsh)"
-eval "$(zoxide init zsh)"
-eval "$(fnm env --use-on-cd)"
+command -v fzf &>/dev/null && eval "$(fzf --zsh)"
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
+command -v fnm &>/dev/null && eval "$(fnm env --use-on-cd)"
 
-# Autosuggestions
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Autosuggestions and plugins (platform-specific paths)
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+    # macOS: Homebrew-installed plugins
+    [[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+        source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    [[ -f "$(brew --prefix)/share/forgit/forgit.plugin.zsh" ]] && \
+        source "$(brew --prefix)/share/forgit/forgit.plugin.zsh"
+else
+    # Linux: System or oh-my-zsh custom plugins
+    if [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+        source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+    elif [[ -f $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+        source $ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+    fi
+    # forgit on Linux
+    if [[ -f /usr/share/zsh/plugins/forgit/forgit.plugin.zsh ]]; then
+        source /usr/share/zsh/plugins/forgit/forgit.plugin.zsh
+    elif [[ -f $ZSH/custom/plugins/forgit/forgit.plugin.zsh ]]; then
+        source $ZSH/custom/plugins/forgit/forgit.plugin.zsh
+    fi
+fi
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-
-# Forgit (fzf + git)
-source $(brew --prefix)/share/forgit/forgit.plugin.zsh
 
 # FZF configuration
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+# Platform-specific clipboard command for FZF
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+    _clip_cmd="pbcopy"
+else
+    _clip_cmd="xclip -selection clipboard"
+fi
+
 export FZF_CTRL_R_OPTS="
   --preview 'echo {}' --preview-window up:3:hidden:wrap
   --bind 'ctrl-/:toggle-preview'
-  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | $_clip_cmd)+abort'
   --color header:italic
   --header 'Press CTRL-Y to copy command into clipboard'"
 export FZF_CTRL_T_OPTS="
@@ -77,8 +126,18 @@ alias ls='eza'
 alias ll='eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions'
 alias tmux='tmux -f $TMUX_CONF'
 alias nano='nvim'
-alias k9s='k9s --kubeconfig /etc/rancher/k3s/k3s.yaml'
-alias claude='/Users/eric/.claude/local/claude'
+
+# Platform-specific aliases
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+    alias claude="$HOME/.claude/local/claude"
+else
+    # Linux: pbcopy/pbpaste aliases
+    alias pbcopy='xclip -selection clipboard'
+    alias pbpaste='xclip -selection clipboard -o'
+fi
+
+# k9s alias (only if kubeconfig exists)
+[[ -f /etc/rancher/k3s/k3s.yaml ]] && alias k9s='k9s --kubeconfig /etc/rancher/k3s/k3s.yaml'
 
 # Tmuxinator aliases
 alias mux="tmuxinator"
@@ -89,6 +148,7 @@ alias dev="tmuxinator start coding"
 # Source external files
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 [[ -f ~/.env ]] && source ~/.env
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # Git/Dev Workflow
 gbf() {
@@ -97,7 +157,6 @@ gbf() {
     sed 's/remotes\/origin\///' | xargs git checkout
 }
 
-# gsp already exists in forgit - use gsf instead
 gsf() {
   git status -s | fzf --preview 'git diff --color=always {2}' --multi | awk '{print $2}'
 }
@@ -161,4 +220,13 @@ calc() { python3 -c "print($*)" }
 _zsh_init_done=1
 
 # Syntax highlighting (MUST be last)
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ "$DOTFILES_OS" == "macos" ]]; then
+    [[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
+        source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+else
+    if [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+        source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    elif [[ -f $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+        source $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    fi
+fi

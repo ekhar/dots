@@ -1,0 +1,9 @@
+# Files Stow should never symlink
+^install\.sh$
+^scripts$
+^README\.md$
+^LICENSE$
+\.git$
+\.gitignore$
+\.gitmodules$
+\.stow-local-ignore$

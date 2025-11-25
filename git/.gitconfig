@@ -1,0 +1,43 @@
+[user]
+    # Set your name and email here or in ~/.gitconfig.local
+    # name = Your Name
+    # email = your@email.com
+
+[core]
+    editor = nvim
+    pager = delta
+    excludesFile = ~/.gitignore_global
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+
+[merge]
+    conflictstyle = diff3
+
+[diff]
+    colorMoved = default
+
+[delta]
+    navigate = true
+    light = false
+    line-numbers = true
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    lg = log --oneline --graph --decorate
+    last = log -1 HEAD
+    unstage = reset HEAD --
+    amend = commit --amend --no-edit
+
+[include]
+    # Local overrides (not tracked in git)
+    path = ~/.gitconfig.local

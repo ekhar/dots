@@ -1,60 +1,53 @@
 -- filename: .config/nvim/lua/plugins/lsp.lua
-local nvim_lsp = require("lspconfig")
-
--- Specialized root pattern that allows for an exclusion
----@param opt { root: string[], exclude: string[] }
----@return fun(file_name: string): string | nil
-local function root_pattern_exclude(opt)
-  return function(fname)
-    local excluded_root = nvim_lsp.util.root_pattern(unpack(opt.exclude))(fname)
-    local included_root = nvim_lsp.util.root_pattern(unpack(opt.root))(fname)
-    if excluded_root then
-      return nil
-    else
-      return included_root
-    end
-  end
-end
-
-return {
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        denols = {
-          filetypes = { "typescript", "typescriptreact" },
-          root_dir = nvim_lsp.util.root_pattern("deno.jsonc", "deno.json"),
-          init_options = {
-            lint = true,
-            suggest = {
-              imports = {
-                hosts = {
-                  ["https://deno.land"] = true,
-                },
-              },
-            },
-          },
-        },
-        tsserver = {
-          root_dir = root_pattern_exclude({
-            root = { "package.json" },
-            exclude = { "deno.json", "deno.jsonc" },
-          }),
-          single_file_support = false,
-        },
-        vtsls = {
-          root_dir = function()
-            return not vim.fs.root(0, { "deno.json", "deno.jsonc" })
-              and vim.fs.root(0, {
-                "tsconfig.json",
-                "jsconfig.json",
-                "package.json",
-                ".git",
-              })
-          end,
-          single_file_support = false,
-        },
-      },
-    },
-  },
-}
+-- -- filename: .config/nvim/lua/plugins/lsp.lua
+-- local util = require("lspconfig.util")
+--
+-- -- Helper: true if we're inside a Deno project
+-- local function is_deno_root(fname)
+--   return util.root_pattern("deno.json", "deno.jsonc")(fname)
+-- end
+--
+-- return {
+--   {
+--     "neovim/nvim-lspconfig",
+--     opts = {
+--       servers = {
+--         -- DENO: only attach when deno.json(c) exists
+--         denols = {
+--           root_dir = util.root_pattern("deno.json", "deno.jsonc"),
+--           init_options = {
+--             lint = true,
+--             suggest = {
+--               imports = {
+--                 hosts = { ["https://deno.land"] = true },
+--               },
+--             },
+--           },
+--         },
+--
+--         -- Prefer VTSLS for TS/JS
+--         vtsls = {
+--           -- Don't attach if it's a Deno project
+--           root_dir = function(fname)
+--             if is_deno_root(fname) then
+--               return nil
+--             end
+--             return util.root_pattern("tsconfig.json", "package.json", "jsconfig.json", ".git")(fname)
+--           end,
+--           single_file_support = true,
+--           settings = {
+--             typescript = {
+--               tsserver = { maxTsServerMemory = 4096 },
+--               preferences = {
+--                 importModuleSpecifier = "project-relative",
+--               },
+--             },
+--           },
+--         },
+--
+--         -- Disable tsserver to avoid double-binding/conflicts with vtsls
+--         tsserver = false,
+--       },
+--     },
+--   },
+-- }

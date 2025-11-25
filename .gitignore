@@ -1,0 +1,15 @@
+# TPM plugins are installed per-machine
+tmux/.config/tmux/plugins/
+
+# Generated/cached files
+*.pyc
+__pycache__/
+.DS_Store
+
+# Local machine-specific overrides
+*.local
+
+# Sensitive files
+.env
+*.pem
+*.key
