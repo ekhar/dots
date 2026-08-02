@@ -46,6 +46,20 @@ check_installed_file() {
   fi
 }
 
+check_installed_json_template() {
+  local path="$1"
+  local source="$2"
+  if [[ ! -f "$path" ]]; then
+    fail "$path is missing"
+  elif jq -e --slurpfile expected "$DOTS_DIR/$source" \
+    '. as $current | all($expected[0] | to_entries[]; $current[.key] == .value)' \
+    "$path" >/dev/null; then
+    ok "$path contains its curated settings"
+  else
+    warn "$path differs from $DOTS_DIR/$source"
+  fi
+}
+
 check_private_file() {
   local path="$1"
   local mode
@@ -73,7 +87,7 @@ check_link "$HOME/.config/nvim/init.lua" 'nvim/.config/nvim/init.lua'
 check_link "$HOME/.config/opencode/opencode.json" 'opencode/.config/opencode/opencode.json'
 check_link "$HOME/.config/opencode/tui.json" 'opencode/.config/opencode/tui.json'
 check_link "$HOME/.pi/agent/themes/github-dark-default.json" 'pi/.pi/agent/themes/github-dark-default.json'
-check_installed_file "$HOME/.pi/agent/settings.json" 'agent-config/pi-settings.json'
+check_installed_json_template "$HOME/.pi/agent/settings.json" 'agent-config/pi-settings.json'
 check_installed_file "$HOME/.codex/config.toml" 'agent-config/codex-config.toml'
 if [[ "$(uname -s)" == Darwin ]]; then
   check_link "$HOME/Library/Application Support/com.mitchellh.ghostty/config" \
@@ -88,7 +102,7 @@ check_private_file "$HOME/.pi/agent/settings.json"
 check_private_file "$HOME/.codex/config.toml"
 
 section "Commands"
-for command_name in zsh tmux git stow fzf zoxide fnm direnv eza rg nvim; do
+for command_name in zsh tmux git stow fzf zoxide fnm direnv eza rg jq nvim; do
   if have "$command_name"; then
     ok "$command_name: $(command -v "$command_name")"
   else

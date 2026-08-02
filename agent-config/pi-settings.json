@@ -5,9 +5,6 @@
   "defaultThinkingLevel": "medium",
   "defaultProjectTrust": "ask",
   "externalEditor": "nvim",
-  "enabledModels": [
-    "gpt-5.6-sol"
-  ],
   "packages": [
     "npm:pi-vim@0.14.1",
     "npm:pi-lens@3.8.74"
