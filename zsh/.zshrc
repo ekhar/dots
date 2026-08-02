@@ -71,7 +71,7 @@ fi
 [[ -r "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"
 
 # Interactive tool integrations.
-if command -v fzf >/dev/null 2>&1; then
+if [[ -t 0 && -t 1 ]] && command -v fzf >/dev/null 2>&1; then
   if fzf_shell_init=$(fzf --zsh 2>/dev/null); then
     eval "$fzf_shell_init"
   else
