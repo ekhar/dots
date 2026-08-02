@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+set -u
+
+DOTS_DIR="${DOTS_DIR:-$HOME/dots}"
+failures=0
+warnings=0
+
+ok() { printf '\033[0;32m[OK]\033[0m %s\n' "$1"; }
+info() { printf '\033[0;34m[INFO]\033[0m %s\n' "$1"; }
+warn() { warnings=$((warnings + 1)); printf '\033[0;33m[WARN]\033[0m %s\n' "$1"; }
+fail() { failures=$((failures + 1)); printf '\033[0;31m[FAIL]\033[0m %s\n' "$1"; }
+have() { command -v "$1" >/dev/null 2>&1; }
+section() { printf '\n%s\n' "$1"; }
+
+check_link() {
+  local path="$1"
+  local expected="$2"
+  local resolved
+
+  if [[ ! -e "$path" && ! -L "$path" ]]; then
+    fail "$path is missing"
+    return
+  fi
+  if [[ ! -L "$path" ]]; then
+    warn "$path is not managed by Stow"
+    return
+  fi
+
+  resolved=$(realpath "$path" 2>/dev/null || true)
+  if [[ "$resolved" == "$DOTS_DIR/$expected" ]]; then
+    ok "$path"
+  else
+    warn "$path resolves to $resolved; expected $DOTS_DIR/$expected"
+  fi
+}
+
+check_installed_file() {
+  local path="$1"
+  local source="$2"
+  if [[ ! -f "$path" ]]; then
+    fail "$path is missing"
+  elif cmp -s "$path" "$DOTS_DIR/$source"; then
+    ok "$path matches its curated template"
+  else
+    warn "$path differs from $DOTS_DIR/$source"
+  fi
+}
+
+check_private_file() {
+  local path="$1"
+  local mode
+  [[ -e "$path" ]] || return 0
+  mode=$(stat -f '%Lp' "$path" 2>/dev/null || stat -c '%a' "$path" 2>/dev/null || true)
+  if [[ "$mode" == 600 ]]; then
+    ok "$path has private permissions"
+  else
+    warn "$path permissions are $mode; expected 600"
+  fi
+}
+
+section "Managed configuration"
+if git -C "$DOTS_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  ok "dotfiles repository found at $DOTS_DIR"
+else
+  fail "dotfiles repository not found at $DOTS_DIR"
+fi
+
+check_link "$HOME/.zshrc" 'zsh/.zshrc'
+check_link "$HOME/.zprofile" 'zsh/.zprofile'
+check_link "$HOME/.tmux.conf" 'tmux/.tmux.conf'
+check_link "$HOME/.config/tmux/tmux.conf" 'tmux/.config/tmux/tmux.conf'
+check_link "$HOME/.config/nvim/init.lua" 'nvim/.config/nvim/init.lua'
+check_link "$HOME/.config/opencode/opencode.json" 'opencode/.config/opencode/opencode.json'
+check_link "$HOME/.config/opencode/tui.json" 'opencode/.config/opencode/tui.json'
+check_link "$HOME/.pi/agent/themes/github-dark-default.json" 'pi/.pi/agent/themes/github-dark-default.json'
+check_installed_file "$HOME/.pi/agent/settings.json" 'agent-config/pi-settings.json'
+check_installed_file "$HOME/.codex/config.toml" 'agent-config/codex-config.toml'
+if [[ "$(uname -s)" == Darwin ]]; then
+  check_link "$HOME/Library/Application Support/com.mitchellh.ghostty/config" \
+    'ghostty/Library/Application Support/com.mitchellh.ghostty/config'
+fi
+
+section "Permissions"
+check_private_file "$HOME/.zshrc.local"
+check_private_file "$HOME/.env"
+check_private_file "$HOME/.pi/agent/.env"
+check_private_file "$HOME/.pi/agent/settings.json"
+check_private_file "$HOME/.codex/config.toml"
+
+section "Commands"
+for command_name in zsh tmux git stow fzf zoxide fnm direnv eza rg nvim; do
+  if have "$command_name"; then
+    ok "$command_name: $(command -v "$command_name")"
+  else
+    fail "$command_name is not installed or not on PATH"
+  fi
+done
+for command_name in ghostty pi opencode codex bat tmuxinator; do
+  if have "$command_name"; then
+    ok "$command_name: $(command -v "$command_name")"
+  else
+    warn "$command_name is not installed or not on PATH"
+  fi
+done
+
+section "Syntax"
+ZSH_BIN="${ZSH_BIN:-/bin/zsh}"
+if "$ZSH_BIN" -n "$DOTS_DIR/zsh/.zshrc" "$DOTS_DIR/zsh/.zprofile"; then
+  ok "zsh configuration parses"
+else
+  fail "zsh configuration has syntax errors"
+fi
+
+shell_failures=0
+while IFS= read -r -d '' script; do
+  if ! /bin/bash -n "$script"; then
+    shell_failures=$((shell_failures + 1))
+  fi
+done < <(find "$DOTS_DIR/scripts" -type f -print0)
+if ((shell_failures == 0)); then
+  ok "shell scripts parse"
+else
+  fail "$shell_failures shell script(s) have syntax errors"
+fi
+
+if have tmux && [[ -r "$HOME/.tmux.conf" ]]; then
+  socket="dots-doctor-$$"
+  if tmux -L "$socket" -f "$HOME/.tmux.conf" new-session -d 2>/dev/null; then
+    ok "tmux configuration loads"
+    tmux -L "$socket" kill-server 2>/dev/null || true
+  else
+    fail "tmux configuration failed to load"
+  fi
+fi
+
+section "Secrets"
+secret_files=""
+if have rg; then
+  secret_files=$(rg -l --hidden --glob '!.git/**' --glob '!*.example' \
+    '(^|[[:space:]'\''"])[A-Z0-9_]*(TOKEN|SECRET|PASSWORD|PRIVATE_KEY|API_KEY)[A-Z0-9_]*=[^[:space:]'\''"]{12,}|(^|[^[:alnum:]_])sk-[A-Za-z0-9_-]{20,}' \
+    "$DOTS_DIR" 2>/dev/null || true)
+fi
+if [[ -z "$secret_files" ]]; then
+  ok "no obvious secrets found"
+else
+  warn "possible secrets found in these files:"
+  printf '%s\n' "$secret_files"
+fi
+
+section "Repository"
+if git -C "$DOTS_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  git -C "$DOTS_DIR" status --short --branch
+fi
+
+printf '\n'
+if ((failures > 0)); then
+  fail "$failures failure(s), $warnings warning(s)"
+  exit 1
+elif ((warnings > 0)); then
+  warn "0 failures, $warnings warning(s)"
+else
+  ok "all checks passed"
+fi

@@ -1,117 +1,146 @@
 #!/usr/bin/env bash
 
-# Post-installation tasks
+# Post-installation tasks. The parent installer enables strict mode.
 
 set_default_shell() {
     local zsh_path
-    zsh_path=$(command -v zsh)
-
-    if [[ "$SHELL" == "$zsh_path" ]]; then
-        log_success "Zsh is already default shell"
-        return 0
-    fi
+    zsh_path=$(command -v zsh || true)
 
     if [[ -z "$zsh_path" ]]; then
         log_error "Zsh not found in PATH"
         return 1
     fi
 
-    # Ensure zsh is in /etc/shells
-    if ! grep -q "$zsh_path" /etc/shells; then
-        log_info "Adding $zsh_path to /etc/shells..."
-        echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    if [[ "$SHELL" == */zsh ]]; then
+        log_success "Zsh is already the default shell"
+        return 0
     fi
 
-    log_info "Setting zsh as default shell..."
+    if ! grep -Fxq "$zsh_path" /etc/shells; then
+        log_info "Adding $zsh_path to /etc/shells..."
+        printf '%s\n' "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+
+    log_info "Setting zsh as the default shell..."
     chsh -s "$zsh_path"
-    log_success "Default shell set to zsh (restart your terminal)"
+}
+
+stow_packages() {
+    local packages=(zsh tmux git nvim opencode pi)
+    [[ "$OS" == macos ]] && packages+=(ghostty)
+    [[ "$OS" == arch && -d "$DOTFILES_DIR/arch" ]] && packages+=(arch)
+    printf '%s\n' "${packages[@]}"
+}
+
+install_agent_configs() {
+    mkdir -p "$HOME/.pi/agent" "$HOME/.codex"
+    install -m 600 "$DOTFILES_DIR/agent-config/pi-settings.json" "$HOME/.pi/agent/settings.json"
+    install -m 600 "$DOTFILES_DIR/agent-config/codex-config.toml" "$HOME/.codex/config.toml"
+    log_success "Mutable agent settings installed from curated templates"
 }
 
 run_stow() {
-    log_info "Running stow to create symlinks..."
-    cd "$DOTFILES_DIR" || exit 1
+    local package
+    cd "$DOTFILES_DIR" || return 1
 
-    # Common packages for all platforms
-    local packages="zsh tmux git"
+    while IFS= read -r package; do
+        [[ -d "$DOTFILES_DIR/$package" ]] || continue
+        log_info "Stowing $package..."
+        stow --restow --no-folding --target "$HOME" "$package"
+    done < <(stow_packages)
 
-    # Platform-specific packages
-    if [[ "$OS" == "arch" ]]; then
-        # Add arch-specific configs if they exist
-        [[ -d "$DOTFILES_DIR/arch" ]] && packages="$packages arch"
-    fi
-
-    # Stow each package
-    for pkg in $packages; do
-        if [[ -d "$DOTFILES_DIR/$pkg" ]]; then
-            log_info "Stowing $pkg..."
-            stow -v --restow "$pkg" 2>&1 | grep -v "^LINK:" || true
-        fi
-    done
-
-    log_success "Symlinks created"
+    log_success "Dotfile links created"
 }
 
-cleanup_old_symlinks() {
-    # Remove old-style symlinks that point to dots/.zshrc or dots/.config/*
-    # These conflict with the new package-based stow structure
-
-    local old_symlinks=(".zshrc" ".p10k.zsh" ".gitconfig" ".gitignore_global")
-
-    for file in "${old_symlinks[@]}"; do
-        local target="$HOME/$file"
-        if [[ -L "$target" ]]; then
-            local link_target
-            link_target=$(readlink "$target")
-            # Check if it points to old dots structure (not package-based)
-            if [[ "$link_target" == dots/.* && "$link_target" != dots/*/.*  ]]; then
-                log_info "Removing old symlink: $file -> $link_target"
-                rm "$target"
-            fi
-        fi
-    done
-
-    # Handle .config/tmux specially - it might be a symlink or directory
-    if [[ -L "$HOME/.config/tmux" ]]; then
-        log_info "Removing old .config/tmux symlink"
-        rm "$HOME/.config/tmux"
-    fi
+is_managed_link() {
+    local path="$1"
+    local resolved
+    [[ -L "$path" ]] || return 1
+    resolved=$(realpath "$path" 2>/dev/null || true)
+    [[ "$resolved" == "$DOTFILES_DIR"/* ]]
 }
 
-backup_existing() {
-    local backup_dir="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
-    local files_to_backup=(".zshrc" ".p10k.zsh" ".config/tmux" ".gitconfig")
-    local need_backup=false
+backup_path() {
+    local relative="$1"
+    local backup_dir="$2"
+    local target="$HOME/$relative"
 
-    # Check if any real files (not symlinks) need backing up
-    for file in "${files_to_backup[@]}"; do
-        local target="$HOME/$file"
-        if [[ -e "$target" && ! -L "$target" ]]; then
-            need_backup=true
-            break
-        fi
-    done
+    [[ -e "$target" || -L "$target" ]] || return 0
 
-    if [[ "$need_backup" == "true" ]]; then
-        log_info "Backing up existing configs to $backup_dir..."
-        mkdir -p "$backup_dir"
-        for file in "${files_to_backup[@]}"; do
-            local target="$HOME/$file"
-            if [[ -e "$target" && ! -L "$target" ]]; then
-                log_info "Backing up $file"
-                mkdir -p "$(dirname "$backup_dir/$file")"
-                cp -r "$target" "$backup_dir/$file"
-                rm -rf "$target"
-            fi
-        done
-        log_success "Backup complete: $backup_dir"
+    # Stow can safely recreate links that already point into this repository.
+    if is_managed_link "$target"; then
+        rm "$target"
+        return 0
     fi
 
-    # Clean up old symlinks
-    cleanup_old_symlinks
+    mkdir -p "$backup_dir/$(dirname "$relative")"
+    mv "$target" "$backup_dir/$relative"
+    log_info "Backed up ~/$relative"
+}
+
+backup_mutable_config() {
+    local relative="$1"
+    local template="$2"
+    local backup_dir="$3"
+    local target="$HOME/$relative"
+
+    if [[ -f "$target" ]] && cmp -s "$target" "$DOTFILES_DIR/$template"; then
+        return 0
+    fi
+    backup_path "$relative" "$backup_dir"
+}
+
+prepare_directory() {
+    local relative="$1"
+    local marker="$2"
+    local backup_dir="$3"
+    local target="$HOME/$relative"
+
+    [[ -e "$target" || -L "$target" ]] || return 0
+    if [[ -d "$target" && ! -L "$target" ]] && is_managed_link "$target/$marker"; then
+        return 0
+    fi
+    backup_path "$relative" "$backup_dir"
+}
+
+prepare_existing_configs() {
+    local backup_dir
+    backup_dir="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
+    local paths=(
+        .zshrc
+        .zprofile
+        .p10k.zsh
+        .tmux.conf
+        .gitconfig
+        .gitignore_global
+        .config/opencode/opencode.json
+        .config/opencode/tui.json
+        .pi/agent/themes/github-dark-default.json
+    )
+
+    if [[ "$OS" == macos ]]; then
+        paths+=("Library/Application Support/com.mitchellh.ghostty/config")
+    fi
+
+    prepare_directory .config/tmux tmux.conf "$backup_dir"
+    prepare_directory .config/nvim init.lua "$backup_dir"
+    backup_mutable_config .pi/agent/settings.json agent-config/pi-settings.json "$backup_dir"
+    backup_mutable_config .codex/config.toml agent-config/codex-config.toml "$backup_dir"
+
+    local relative
+    for relative in "${paths[@]}"; do
+        backup_path "$relative" "$backup_dir"
+    done
+
+    # Remove an empty backup directory when nothing needed migration.
+    rmdir "$backup_dir" 2>/dev/null || true
 }
 
 post_install() {
-    backup_existing
+    prepare_existing_configs
     run_stow
+    install_agent_configs
     set_default_shell
+
+    log_info "Authenticate Pi, OpenCode, and Codex separately; credentials are never stored in this repository."
 }

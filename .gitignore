@@ -1,7 +1,15 @@
-# TPM plugins are installed per-machine
+# Worktrees and per-machine plugin installations
+.worktrees/
 tmux/.config/tmux/plugins/
 
+# Authentication and generated service state
+.config/gh/hosts.yml
+.config/stripe/config.toml
+
 # Generated/cached files
+.config/musikcube/1/
+.config/musikcube/*.txt
+.config/spicetify/
 *.pyc
 __pycache__/
 .DS_Store

@@ -5,7 +5,6 @@
 
 [core]
     editor = nvim
-    pager = delta
     excludesFile = ~/.gitignore_global
 
 [init]
@@ -22,11 +21,6 @@
 
 [diff]
     colorMoved = default
-
-[delta]
-    navigate = true
-    light = false
-    line-numbers = true
 
 [alias]
     st = status

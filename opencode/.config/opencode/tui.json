@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "keybinds": {
+    "leader": "ctrl+x",
+    "messages_half_page_up": "ctrl+u",
+    "messages_half_page_down": "ctrl+d",
+    "messages_first": "ctrl+g",
+    "messages_last": "ctrl+shift+g",
+    "messages_line_up": "<leader>k",
+    "messages_line_down": "<leader>j",
+    "input_line_home": "ctrl+a",
+    "input_line_end": "ctrl+e",
+    "input_word_forward": "alt+w",
+    "input_word_backward": "alt+b",
+    "messages_copy": "<leader>y",
+    "messages_undo": "<leader>u",
+    "messages_redo": "<leader>r",
+    "session_new": "<leader>n",
+    "session_list": "<leader>l",
+    "app_exit": "<leader>q,ctrl+c"
+  }
+}

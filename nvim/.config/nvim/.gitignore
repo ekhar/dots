@@ -1,0 +1,5 @@
+*.log
+.repro/
+data/
+debug/
+doc/tags

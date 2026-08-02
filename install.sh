@@ -85,6 +85,27 @@ parse_args() {
     done
 }
 
+validate_configuration() {
+    /bin/bash -n "$DOTFILES_DIR/install.sh"
+    find "$DOTFILES_DIR/scripts" -type f -exec /bin/bash -n {} +
+    /bin/zsh -n "$DOTFILES_DIR/zsh/.zshrc" "$DOTFILES_DIR/zsh/.zprofile"
+
+    if command_exists stow; then
+        local target
+        local package
+        target=$(mktemp -d)
+        while IFS= read -r package; do
+            [[ -d "$DOTFILES_DIR/$package" ]] || continue
+            stow --simulate --no-folding --target "$target" --dir "$DOTFILES_DIR" "$package"
+        done < <(stow_packages)
+        rm -rf "$target"
+    else
+        log_warn "Stow is not installed, so link simulation was skipped"
+    fi
+
+    log_success "Configuration syntax and package layout validated"
+}
+
 dry_run_info() {
     echo ""
     log_info "=== DRY RUN MODE ==="
@@ -93,10 +114,12 @@ dry_run_info() {
     log_info "1. Detect system: $OS on $ARCH"
     [[ "$SKIP_PACKAGES" != "true" ]] && log_info "2. Install packages via ${OS} package manager"
     [[ "$SKIP_OMZ" != "true" ]] && log_info "3. Install Oh-my-zsh and Powerlevel10k"
-    [[ "$SKIP_STOW" != "true" ]] && log_info "4. Create symlinks via stow for: zsh tmux git"
+    [[ "$SKIP_STOW" != "true" ]] && log_info "4. Link shell, terminal, editor, Git, and agent configs with Stow"
     [[ "$SKIP_TPM" != "true" ]] && log_info "5. Install TPM and tmux plugins"
     log_info "6. Set zsh as default shell"
     echo ""
+    validate_configuration
+    log_info "Conflicting live files will be moved to a timestamped ~/.dotfiles_backup_* directory."
     log_info "Run without --dry-run to execute"
 }
 

@@ -8,8 +8,8 @@ install_oh_my_zsh() {
         return 0
     fi
 
-    log_info "Installing Oh-my-zsh..."
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    log_info "Cloning Oh My Zsh without executing its remote installer..."
+    git clone --depth=1 https://github.com/ohmyzsh/ohmyzsh.git "$HOME/.oh-my-zsh"
 }
 
 install_powerlevel10k() {

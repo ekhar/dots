@@ -1,0 +1,4 @@
+# Machine-local settings. Copy to ~/.zshrc.local and chmod 600.
+# Keep this file silent because it loads before Powerlevel10k instant prompt.
+
+# export CLOUDFLARE_API_TOKEN=...

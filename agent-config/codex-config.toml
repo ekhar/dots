@@ -1,0 +1,24 @@
+model = "gpt-5.6-sol"
+model_reasoning_effort = "medium"
+plan_mode_reasoning_effort = "high"
+personality = "pragmatic"
+service_tier = "default"
+
+[features]
+goals = true
+memories = true
+prevent_idle_sleep = true
+
+[notice]
+fast_default_opt_out = true
+hide_rate_limit_model_nudge = true
+
+[tui]
+status_line = [
+  "model-with-reasoning",
+  "current-dir",
+  "git-branch",
+  "run-state",
+  "context-remaining",
+  "context-used",
+]

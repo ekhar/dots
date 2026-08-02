@@ -15,6 +15,7 @@ COMMON_PACKAGES=(
     fd
     stow
     jq
+    direnv
 )
 
 # macOS-specific packages (via Homebrew)
@@ -24,7 +25,7 @@ MACOS_PACKAGES=(
     forgit
     fnm
     icalbuddy
-    pfetch
+    tmuxinator
 )
 
 # Arch Linux packages (via pacman)
@@ -38,29 +39,15 @@ ARCH_PACKAGES=(
 # Arch AUR packages
 ARCH_AUR_PACKAGES=(
     fnm-bin
-    pfetch
     forgit
-)
-
-# Ubuntu packages (via apt)
-UBUNTU_PACKAGES=(
-    zsh
-    bat
-    fd-find
 )
 
 install_homebrew() {
     if ! command_exists brew; then
-        log_info "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-        # Add to path for this session
-        if [[ -f "$HOMEBREW_PREFIX/bin/brew" ]]; then
-            eval "$("$HOMEBREW_PREFIX/bin/brew" shellenv)"
-        fi
-    else
-        log_success "Homebrew already installed"
+        log_error "Homebrew is required. Review and install it from https://brew.sh, then rerun this installer."
+        return 1
     fi
+    log_success "Homebrew already installed"
 }
 
 install_macos_packages() {
@@ -69,9 +56,8 @@ install_macos_packages() {
     log_info "Installing packages via Homebrew..."
     brew install "${COMMON_PACKAGES[@]}" "${MACOS_PACKAGES[@]}"
 
-    # Install Nerd Font
-    log_info "Installing Meslo Nerd Font..."
-    brew install --cask font-meslo-lg-nerd-font 2>/dev/null || true
+    log_info "Installing desktop tools..."
+    brew install --cask font-meslo-lg-nerd-font ghostty
 }
 
 install_arch_packages() {
@@ -94,11 +80,13 @@ install_ubuntu_packages() {
     log_info "Updating apt..."
     sudo apt update
 
-    log_info "Installing packages via apt..."
-    sudo apt install -y "${COMMON_PACKAGES[@]}" "${UBUNTU_PACKAGES[@]}" 2>/dev/null || {
-        # Some packages have different names on Ubuntu
-        sudo apt install -y git curl wget neovim tmux fzf zoxide ripgrep stow jq zsh batcat
-    }
+    log_info "Installing Ubuntu packages..."
+    sudo apt install -y git curl wget tmux fzf ripgrep stow jq zsh bat fd-find direnv
+
+    # Ubuntu names these executables differently.
+    mkdir -p "$HOME/.local/bin"
+    command_exists batcat && ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
+    command_exists fdfind && ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
 
     # eza (modern ls replacement)
     if ! command_exists eza; then
@@ -109,11 +97,10 @@ install_ubuntu_packages() {
         sudo apt update && sudo apt install -y eza
     fi
 
-    # fnm (Fast Node Manager)
-    if ! command_exists fnm; then
-        log_info "Installing fnm..."
-        curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
-    fi
+    # Do not execute remote installer scripts implicitly.
+    command_exists zoxide || log_warn "Install zoxide from https://github.com/ajeetdsouza/zoxide."
+    command_exists fnm || log_warn "Install fnm from https://github.com/Schniz/fnm."
+    command_exists nvim || log_warn "LazyVim requires Neovim 0.11.2+. Ubuntu's package is too old; install a current release from https://neovim.io."
 
     # Install Nerd Font
     log_info "Installing Meslo Nerd Font..."

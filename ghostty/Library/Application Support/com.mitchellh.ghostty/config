@@ -1,0 +1,4 @@
+# Preserve modified keys through Ghostty and tmux for terminal UIs.
+# Preserve modified keys as distinct CSI sequences for tmux and terminal UIs.
+keybind = shift+enter=csi:13;2u
+keybind = alt+backspace=text:\x1b\x7f

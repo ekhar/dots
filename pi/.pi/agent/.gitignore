@@ -1,0 +1,14 @@
+auth.json
+.env
+.env.*
+!.env.example
+sessions/
+workflows/
+trust.json
+models-store.json
+node_modules/
+npm/
+extensions/
+skills/
+*.log
+*.tmp

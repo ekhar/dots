@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REAL_ZSHRC="${REAL_ZSHRC:-$HOME/.zshrc}"
+ZSH_BIN="${ZSH_BIN:-/bin/zsh}"
+RUNS="${1:-3}"
+
+if ! [[ "$RUNS" =~ ^[0-9]+$ ]] || ((RUNS < 1)); then
+  echo "usage: zshbench [runs]" >&2
+  exit 2
+fi
+if [[ ! -r "$REAL_ZSHRC" ]]; then
+  echo "zshbench: cannot read $REAL_ZSHRC" >&2
+  exit 1
+fi
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+cat >"$tmpdir/.zshrc" <<EOF
+zmodload zsh/zprof
+source "$REAL_ZSHRC"
+zprof
+EOF
+
+printf 'Profiling %s with %s (%s runs)\n\n' "$REAL_ZSHRC" "$ZSH_BIN" "$RUNS"
+for ((run = 1; run <= RUNS; run++)); do
+  printf '== run %s ==\n' "$run"
+  /usr/bin/time -p env ZDOTDIR="$tmpdir" "$ZSH_BIN" -i -c exit 2>&1 | sed -n '1,80p'
+  printf '\n'
+done
