@@ -1,8 +1,7 @@
 # Agent shells (Claude Code, Codex) skip everything below. Their shell snapshots
-# would carry the prompt, plugins and aliases (ls=eza) into every command, so they
-# get only the fleet's agent PATH. .zshenv sets their options.
+# would carry the prompt, plugins and aliases (ls=eza) into every command.
+# .zshenv and .zprofile set their options and PATH.
 if [[ -n "$CLAUDECODE$CODEX_THREAD_ID" ]]; then
-  [[ -r "$HOME/.agents/shell/env.sh" ]] && source "$HOME/.agents/shell/env.sh"
   return
 fi
 
