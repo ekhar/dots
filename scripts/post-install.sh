@@ -27,7 +27,7 @@ set_default_shell() {
 
 stow_packages() {
     local packages=(zsh tmux git nvim opencode pi)
-    [[ "$OS" == macos ]] && packages+=(ghostty)
+    [[ "$OS" == macos ]] && packages+=(ghostty bash)
     [[ "$OS" == arch && -d "$DOTFILES_DIR/arch" ]] && packages+=(arch)
     printf '%s\n' "${packages[@]}"
 }

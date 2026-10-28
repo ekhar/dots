@@ -1,3 +1,11 @@
+# Agent shells (Claude Code, Codex) skip everything below. Their shell snapshots
+# would carry the prompt, plugins and aliases (ls=eza) into every command, so they
+# get only the fleet's agent PATH. .zshenv sets their options.
+if [[ -n "$CLAUDECODE$CODEX_THREAD_ID" ]]; then
+  [[ -r "$HOME/.agents/shell/env.sh" ]] && source "$HOME/.agents/shell/env.sh"
+  return
+fi
+
 # Keep the preamble silent for Powerlevel10k instant prompt.
 export DIRENV_LOG_FORMAT=
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
@@ -129,7 +137,6 @@ else
 fi
 
 # Safe defaults. Permission-bypassing agent modes are explicit opt-ins.
-alias python=python3
 alias ls=eza
 alias ll='eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions'
 alias nano=nvim

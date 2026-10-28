@@ -37,7 +37,8 @@ On Ubuntu, the installer installs safe distribution packages and links the confi
 
 | Package | Managed target |
 | --- | --- |
-| `zsh` | `~/.zshrc`, `~/.zprofile`, `~/.p10k.zsh` |
+| `zsh` | `~/.zshenv`, `~/.zshrc`, `~/.zprofile`, `~/.p10k.zsh` |
+| `bash` | macOS `~/.bashrc`, used only by agents (agent PATH from fleet's `~/.agents/shell/env.sh`) |
 | `tmux` | `~/.tmux.conf`, `~/.config/tmux/` |
 | `nvim` | `~/.config/nvim/` |
 | `ghostty` | macOS Ghostty configuration under `~/Library/Application Support/` |
