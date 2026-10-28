@@ -15,14 +15,13 @@ Personal configuration managed with GNU Stow. macOS is primary; zsh and tmux als
 ```bash
 ./install.sh --dry-run
 ./install.sh --skip-packages
-stow --no-folding --simulate --target "$HOME" zsh tmux git nvim opencode pi ghostty bash
+stow --no-folding --simulate --target "$HOME" zsh tmux git nvim opencode pi ghostty
 scripts/dots-doctor
 ```
 
 ## Packages
 
 - `zsh`: shell, prompt, and local workflow functions. Agent shells (Claude Code, Codex) skip the interactive setup and get bash-like globbing
-- `bash`: macOS only, for agents: `~/.bashrc` sets the fleet agent PATH from `~/.agents/shell/env.sh`
 - `tmux`: default entry point, XDG configuration, platform overrides, and TPM declarations
 - `nvim`: LazyVim configuration and lockfile
 - `ghostty`: macOS terminal key handling

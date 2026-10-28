@@ -27,7 +27,7 @@ set_default_shell() {
 
 stow_packages() {
     local packages=(zsh tmux git nvim opencode pi)
-    [[ "$OS" == macos ]] && packages+=(ghostty bash)
+    [[ "$OS" == macos ]] && packages+=(ghostty)
     [[ "$OS" == arch && -d "$DOTFILES_DIR/arch" ]] && packages+=(arch)
     printf '%s\n' "${packages[@]}"
 }
@@ -120,7 +120,7 @@ prepare_existing_configs() {
     )
 
     if [[ "$OS" == macos ]]; then
-        paths+=("Library/Application Support/com.mitchellh.ghostty/config" .bashrc)
+        paths+=("Library/Application Support/com.mitchellh.ghostty/config")
     fi
 
     prepare_directory .config/tmux tmux.conf "$backup_dir"
