@@ -1,9 +1,0 @@
-
-[
-  {
-  "output": [ "DP-2" ],
-    "include": [
-      "~/.config/waybar/config.jsonc",
-    ],
-  }
-]

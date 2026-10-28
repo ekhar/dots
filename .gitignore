@@ -2,22 +2,9 @@
 .worktrees/
 tmux/.config/tmux/plugins/
 
-# Authentication and generated service state
-.config/gh/hosts.yml
-.config/stripe/config.toml
-
-# Generated/cached files
-.config/musikcube/1/
-.config/musikcube/*.txt
-.config/spicetify/
-*.pyc
-__pycache__/
-.DS_Store
-
-# Local machine-specific overrides
+# Local overrides and credentials
 *.local
-
-# Sensitive files
 .env
 *.pem
 *.key
+.DS_Store

@@ -1,14 +1,16 @@
 # Dotfiles
 
-A small, reproducible development environment centered on Ghostty, zsh, tmux, Neovim, Pi, OpenCode, and Codex. macOS is the primary target; the shell and tmux packages also support Arch Linux and Ubuntu.
+My interactive environment: Ghostty, zsh, tmux, Neovim, Git, and the OpenCode and Pi themes. macOS is primary; zsh and tmux also work on Ubuntu.
+
+Nothing here is for agents. Agent shells and settings live in my private fleet repository, which keeps the login shell bash because Claude Code and Codex run it. Ghostty (`command = /bin/zsh -l`) and tmux (`default-shell`) start zsh explicitly, so agents never read these zsh files. On a machine whose login shell is zsh, everything works the same.
 
 ## Principles
 
 - GNU Stow owns configuration links.
-- Authentication, sessions, caches, plugins, and generated application state stay local.
+- Light: no framework, and an interactive shell starts in about 50 ms.
+- Authentication, sessions, caches, and plugin installs stay local.
 - Agent permission bypasses are explicit opt-ins, never defaults.
-- Terminal keyboard protocols are preserved from Ghostty through tmux to terminal UIs.
-- Startup does not clone repositories or perform other network operations.
+- Startup does no network access.
 
 ## Install
 
@@ -16,37 +18,26 @@ A small, reproducible development environment centered on Ghostty, zsh, tmux, Ne
 git clone git@github.com:ekhar/dots.git ~/dots
 cd ~/dots
 ./install.sh --dry-run
-./install.sh
+./install.sh                 # or --skip-packages to only link
 ```
 
-Useful options:
-
-```text
---skip-packages   only configure installed software
---skip-omz        keep an existing Oh My Zsh installation
---skip-tpm        do not install tmux plugins
---skip-stow       install software without linking configuration
---packages-only   install packages and stop
-```
-
-Existing configuration files are moved to a timestamped `~/.dotfiles_backup_*` directory before Stow links are created.
-
-On Ubuntu, the installer installs safe distribution packages and links the configuration, but intentionally does not install an outdated Neovim. Install Neovim 0.11.2 or newer separately. tmux 3.2-3.4 uses its xterm extended-key format; tmux 3.5+ uses CSI-u.
+Conflicting live files move to a timestamped `~/.dotfiles_backup_*` directory before linking. On Ubuntu, install starship, fnm, and Neovim 0.11.2+ separately; apt lacks them or ships an old version.
 
 ## Packages
 
 | Package | Managed target |
 | --- | --- |
-| `zsh` | `~/.zshenv`, `~/.zshrc`, `~/.zprofile`, `~/.p10k.zsh` |
+| `zsh` | `~/.zshenv`, `~/.zprofile`, `~/.zshrc`, `~/.config/starship.toml` |
 | `tmux` | `~/.tmux.conf`, `~/.config/tmux/` |
 | `nvim` | `~/.config/nvim/` |
-| `ghostty` | macOS Ghostty configuration under `~/Library/Application Support/` |
-| `opencode` | stable OpenCode and TUI settings |
+| `ghostty` | Ghostty configuration under `~/Library/Application Support/` (macOS) |
+| `opencode` | OpenCode and TUI settings |
 | `pi` | Pi theme |
-| `agent-config` | curated Pi and Codex settings copied into mutable runtime directories |
 | `git` | Git configuration and global ignore rules |
 
-Pi and Codex rewrite their settings files with runtime state, so the installer copies curated templates rather than symlinking those files into Git. Log in to Pi, OpenCode, Codex, GitHub, and other services after installation.
+## zsh
+
+No Oh My Zsh. `.zshrc` sets history, completion (cache rebuilt at most daily), vi keys with the usual insert-mode Emacs keys, and prefix history search on the arrows, then loads fzf, zoxide, fnm, direnv, starship, autosuggestions, and syntax highlighting. Machine-specific settings go in `~/.zshrc.local` (mode `600`), loaded last; see `zsh/.zshrc.local.example`.
 
 ## Terminal keyboard handling
 
@@ -87,67 +78,26 @@ nvim --headless '+checkhealth' +qa
 
 The lockfile is committed for reproducible plugin installs. Mason packages and editor state remain under `~/.local` and are not tracked.
 
-## Agent commands
-
-Normal agent commands retain their built-in approval and sandbox behavior:
-
-```bash
-pi
-opencode
-codex
-```
-
-Permission-bypassing modes must be requested explicitly:
-
-```bash
-codex-yolo
-claude-yolo
-```
-
-Global Pi defaults use medium reasoning; raise the level for difficult tasks rather than paying high-reasoning latency for every request.
-
-## Shell workflow
+## Commands
 
 | Command | Purpose |
 | --- | --- |
-| `doctor` | Validate links, permissions, commands, syntax, tmux, and obvious secrets |
+| `doctor` | Check links, commands, syntax, startup time, tmux, obvious secrets, and uncommitted drift |
 | `zshbench [runs]` | Profile interactive zsh startup |
-| `proj` | Pick and enter a project under `~/code` |
-| `tproj` | Pick a project and attach or create its tmux session |
-| `gbf` | Pick and switch Git branches |
-| `ff` | Pick and edit a file |
-| `de` / `da` / `dr` / `ds` | Common direnv operations |
+| `codex-yolo`, `claude-yolo` | Permission-bypassing agent modes, only when asked for explicitly |
 
-Machine-specific shell settings belong in `~/.zshrc.local` with mode `600`. Use `zsh/.zshrc.local.example` as a template.
+Installers sometimes append PATH lines to `~/.zshrc` or `~/.zprofile`, which are links into this repository. `doctor` reports them as uncommitted changes; delete them, since `.zshrc` already puts `~/.local/bin` on PATH.
 
 ## Updating
 
 ```bash
 cd ~/dots
 git pull
-./install.sh --skip-packages --skip-omz --skip-tpm
-pi update --all
+./install.sh --skip-packages
 ```
 
 Review and commit `nvim/.config/nvim/lazy-lock.json` whenever Neovim plugins change.
 
 ## Security
 
-Never commit generated authentication files. In particular:
-
-- `~/.config/stripe/config.toml`
-- `~/.config/gh/hosts.yml`
-- `~/.pi/agent/auth.json`
-- `~/.codex/auth.json`
-- API-key `.env` files
-
-If a credential is committed, removing the current file is insufficient. Rotate the credential and purge the path from every published Git ref before force-pushing rewritten history.
-
-After committing or stashing all work and removing extra worktrees, the guarded helper rewrites local refs:
-
-```bash
-CONFIRM_HISTORY_REWRITE='.config/stripe/config.toml' \
-  scripts/purge-secret-history '.config/stripe/config.toml'
-```
-
-`git-filter-repo` may remove the `origin` remote as a safety measure. Verify the rewritten repository and coordinate the required force-push before restoring it.
+Never commit authentication files (`~/.config/gh/hosts.yml`, `~/.codex/auth.json`, `~/.pi/agent/auth.json`, `.env` files). If a credential is committed, rotate it, then purge the path from every published ref with `git filter-repo` and force-push.

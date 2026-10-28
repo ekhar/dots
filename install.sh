@@ -1,166 +1,126 @@
 #!/usr/bin/env bash
+# Install packages and link this repository's configuration into $HOME with Stow.
+# macOS (Homebrew) and Ubuntu (apt). Conflicting live files move to a timestamped
+# ~/.dotfiles_backup_* directory first. The login shell is left alone: on fleet
+# machines it is bash, for agents, and Ghostty and tmux start zsh.
 set -euo pipefail
 
-# Cross-platform dotfiles installer
-# Supports: macOS, Arch Linux, Ubuntu
-
-DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export DOTFILES_DIR
-
-# Source library functions
-source "$DOTFILES_DIR/scripts/lib/utils.sh"
-source "$DOTFILES_DIR/scripts/lib/detect.sh"
-source "$DOTFILES_DIR/scripts/lib/packages.sh"
-source "$DOTFILES_DIR/scripts/install-omz.sh"
-source "$DOTFILES_DIR/scripts/install-tpm.sh"
-source "$DOTFILES_DIR/scripts/post-install.sh"
+DOTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGES=(zsh tmux git nvim opencode pi)
+BREW=(git neovim tmux fzf zoxide eza bat ripgrep fd stow jq direnv fnm starship zsh-autosuggestions zsh-syntax-highlighting)
+APT=(git curl zsh tmux fzf zoxide eza bat fd-find ripgrep stow jq direnv zsh-autosuggestions zsh-syntax-highlighting)
 
 usage() {
-    cat <<EOF
-Usage: $(basename "$0") [OPTIONS]
+  cat <<EOF
+Usage: install.sh [-n|--dry-run] [--skip-packages]
 
-Cross-platform dotfiles installer
-
-Options:
-    -h, --help          Show this help message
-    -n, --dry-run       Show what would be done without making changes
-    --skip-packages     Skip package installation
-    --skip-omz          Skip Oh-my-zsh installation
-    --skip-tpm          Skip TPM installation
-    --skip-stow         Skip stow (symlink creation)
-    --packages-only     Only install packages, skip everything else
-
-Examples:
-    $(basename "$0")                    # Full installation
-    $(basename "$0") --skip-packages    # Skip package installation
-    $(basename "$0") --dry-run          # Preview changes
+  -n, --dry-run     validate syntax and simulate links; change nothing
+  --skip-packages   only link configuration and install tmux plugins
 EOF
 }
 
-# Default options
-DRY_RUN=false
-SKIP_PACKAGES=false
-SKIP_OMZ=false
-SKIP_TPM=false
-SKIP_STOW=false
-PACKAGES_ONLY=false
+say() { printf '\033[0;34m==>\033[0m %s\n' "$1"; }
+have() { command -v "$1" >/dev/null 2>&1; }
 
-parse_args() {
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -h|--help)
-                usage
-                exit 0
-                ;;
-            -n|--dry-run)
-                DRY_RUN=true
-                shift
-                ;;
-            --skip-packages)
-                SKIP_PACKAGES=true
-                shift
-                ;;
-            --skip-omz)
-                SKIP_OMZ=true
-                shift
-                ;;
-            --skip-tpm)
-                SKIP_TPM=true
-                shift
-                ;;
-            --skip-stow)
-                SKIP_STOW=true
-                shift
-                ;;
-            --packages-only)
-                PACKAGES_ONLY=true
-                shift
-                ;;
-            *)
-                log_error "Unknown option: $1"
-                usage
-                exit 1
-                ;;
-        esac
-    done
+dry=false
+skip_packages=false
+for arg in "$@"; do
+  case "$arg" in
+    -n|--dry-run) dry=true ;;
+    --skip-packages) skip_packages=true ;;
+    -h|--help) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+  esac
+done
+
+case "$(uname -s)" in
+  Darwin) os=macos; PACKAGES+=(ghostty) ;;
+  Linux) [[ -f /etc/debian_version ]] && os=ubuntu || { echo "Unsupported Linux: only Ubuntu" >&2; exit 1; } ;;
+  *) echo "Unsupported OS: $(uname -s)" >&2; exit 1 ;;
+esac
+
+install_packages() {
+  if [[ "$os" == macos ]]; then
+    have brew || { echo "Install Homebrew from https://brew.sh first." >&2; exit 1; }
+    brew install "${BREW[@]}"
+    brew install --cask ghostty
+  else
+    sudo apt-get update -q
+    sudo apt-get install -y -q "${APT[@]}"
+    # Ubuntu renames these executables.
+    mkdir -p "$HOME/.local/bin"
+    have batcat && ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
+    have fdfind && ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
+    # Not in apt, and remote installer scripts are not run implicitly.
+    have starship || say "Install starship: https://starship.rs"
+    have fnm || say "Install fnm: https://github.com/Schniz/fnm"
+    have nvim || say "LazyVim needs Neovim 0.11.2+, newer than Ubuntu's: https://neovim.io"
+  fi
 }
 
-validate_configuration() {
-    /bin/bash -n "$DOTFILES_DIR/install.sh"
-    find "$DOTFILES_DIR/scripts" -type f -exec /bin/bash -n {} +
-    /bin/zsh -n "$DOTFILES_DIR/zsh/.zshrc" "$DOTFILES_DIR/zsh/.zprofile"
-
-    if command_exists stow; then
-        local target
-        local package
-        target=$(mktemp -d)
-        while IFS= read -r package; do
-            [[ -d "$DOTFILES_DIR/$package" ]] || continue
-            stow --simulate --no-folding --target "$target" --dir "$DOTFILES_DIR" "$package"
-        done < <(stow_packages)
-        rm -rf "$target"
-    else
-        log_warn "Stow is not installed, so link simulation was skipped"
-    fi
-
-    log_success "Configuration syntax and package layout validated"
+# Every path a package would link, relative to $HOME.
+package_files() {
+  (cd "$DOTS/$1" && find . \( -type f -o -type l \) ! -name .gitignore | sed 's|^\./||')
 }
 
-dry_run_info() {
-    echo ""
-    log_info "=== DRY RUN MODE ==="
-    log_info "Would perform the following actions:"
-    echo ""
-    log_info "1. Detect system: $OS on $ARCH"
-    [[ "$SKIP_PACKAGES" != "true" ]] && log_info "2. Install packages via ${OS} package manager"
-    [[ "$SKIP_OMZ" != "true" ]] && log_info "3. Install Oh-my-zsh and Powerlevel10k"
-    [[ "$SKIP_STOW" != "true" ]] && log_info "4. Link shell, terminal, editor, Git, and agent configs with Stow"
-    [[ "$SKIP_TPM" != "true" ]] && log_info "5. Install TPM and tmux plugins"
-    log_info "6. Set zsh as default shell"
-    echo ""
-    validate_configuration
-    log_info "Conflicting live files will be moved to a timestamped ~/.dotfiles_backup_* directory."
-    log_info "Run without --dry-run to execute"
+# Move a live path out of the way, into the same relative place under $backup.
+move_aside() {
+  mkdir -p "$backup/$(dirname "$1")"
+  mv "$HOME/$1" "$backup/$1"
+  say "Backed up ~/$1"
 }
 
-main() {
-    echo ""
-    echo "  ╔══════════════════════════════════════╗"
-    echo "  ║     Cross-Platform Dotfiles Setup    ║"
-    echo "  ╚══════════════════════════════════════╝"
-    echo ""
-
-    parse_args "$@"
-
-    # Detect system
-    detect_system
-
-    if [[ "$DRY_RUN" == "true" ]]; then
-        dry_run_info
-        exit 0
-    fi
-
-    # Packages only mode
-    if [[ "$PACKAGES_ONLY" == "true" ]]; then
-        install_packages
-        log_success "Package installation complete!"
-        exit 0
-    fi
-
-    # Full installation
-    [[ "$SKIP_PACKAGES" != "true" ]] && install_packages
-    [[ "$SKIP_OMZ" != "true" ]] && install_omz
-    [[ "$SKIP_STOW" != "true" ]] && post_install
-    [[ "$SKIP_TPM" != "true" ]] && install_tpm
-
-    echo ""
-    log_success "Installation complete!"
-    echo ""
-    log_info "Next steps:"
-    log_info "  1. Restart your terminal (or run: exec zsh)"
-    log_info "  2. Powerlevel10k will prompt for configuration on first run"
-    log_info "  3. In tmux, press prefix + I to install plugins (if not auto-installed)"
-    echo ""
+# Move live files that are not already links into this repository out of the way.
+# A symlinked parent directory (say ~/.config/nvim pointing at another checkout)
+# moves as a whole, so its target is never emptied.
+backup_conflicts() {
+  local backup="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)" package file parent
+  for package in "${PACKAGES[@]}"; do
+    while IFS= read -r file; do
+      parent=$(dirname "$file")
+      while [[ "$parent" != . ]]; do
+        [[ -L "$HOME/$parent" ]] && move_aside "$parent"
+        parent=$(dirname "$parent")
+      done
+      [[ -e "$HOME/$file" || -L "$HOME/$file" ]] || continue
+      [[ "$(realpath "$HOME/$file" 2>/dev/null)" == "$DOTS/$package/$file" ]] && continue
+      move_aside "$file"
+    done < <(package_files "$package")
+  done
+  rmdir "$backup" 2>/dev/null || true
 }
 
-main "$@"
+validate() {
+  local file
+  for file in "$DOTS/install.sh" "$DOTS"/scripts/*; do bash -n "$file"; done
+  if have zsh; then
+    for file in "$DOTS"/zsh/.zsh{env,rc} "$DOTS/zsh/.zprofile"; do zsh -n "$file"; done
+  fi
+  if have stow; then
+    local target
+    target=$(mktemp -d)
+    stow --simulate --no-folding --dir "$DOTS" --target "$target" "${PACKAGES[@]}"
+    rm -rf "$target"
+  fi
+  say "Syntax and package layout are valid"
+}
+
+install_tmux_plugins() {
+  local tpm="$HOME/.config/tmux/plugins/tpm"
+  [[ -d "$tpm" ]] || git clone -q https://github.com/tmux-plugins/tpm "$tpm"
+  "$tpm/bin/install_plugins" >/dev/null
+}
+
+if $dry; then
+  validate
+  say "Would link: ${PACKAGES[*]}"
+  exit 0
+fi
+
+$skip_packages || install_packages
+validate
+backup_conflicts
+say "Linking ${PACKAGES[*]}"
+stow --restow --no-folding --dir "$DOTS" --target "$HOME" "${PACKAGES[@]}"
+install_tmux_plugins
+say "Done. Open a new shell."

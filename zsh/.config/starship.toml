@@ -1,0 +1,38 @@
+# Prompt: directory, Git, and a character colored by the last exit status, with
+# failures and slow commands on the right. Only the modules named in the formats
+# run, so each prompt costs one Git status call.
+add_newline = false
+format = "$directory$git_branch$git_state$git_status$character"
+right_format = "$status$cmd_duration$jobs"
+
+[directory]
+style = "bold blue"
+truncation_length = 4
+truncate_to_repo = false
+
+[git_branch]
+format = "[$branch]($style) "
+style = "green"
+
+[git_state]
+format = "[$state( $progress_current/$progress_total)]($style) "
+
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+style = "yellow"
+
+[character]
+success_symbol = "[❯](magenta)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
+
+[status]
+disabled = false
+format = "[$status]($style) "
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
+
+[jobs]
+format = "[$symbol$number]($style) "

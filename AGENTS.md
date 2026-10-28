@@ -1,6 +1,8 @@
 # Dotfiles repository
 
-Personal configuration managed with GNU Stow. macOS is primary; zsh and tmux also support Arch Linux and Ubuntu.
+Personal interactive configuration managed with GNU Stow. macOS is primary; zsh and tmux also support Ubuntu.
+
+Nothing here is for agents. Agent shells, PATH, and Codex and Pi settings belong to `ekhar/fleet` (`~/.agents`). On fleet machines the login shell is bash, which agents run; Ghostty and tmux start zsh explicitly, so agents never read these zsh files.
 
 ## Rules
 
@@ -9,6 +11,8 @@ Personal configuration managed with GNU Stow. macOS is primary; zsh and tmux als
 - Preserve safe defaults. Permission and sandbox bypasses must remain explicit opt-ins.
 - Keep one canonical copy of every configuration.
 - Do not modify live configuration until changes pass dry-run validation.
+- Keep startup light: no shell framework and no network access.
+- Do not set the login shell here; fleet keeps it bash.
 
 ## Commands
 
@@ -21,12 +25,11 @@ scripts/dots-doctor
 
 ## Packages
 
-- `zsh`: shell, prompt, and local workflow functions. Agent shells (Claude Code, Codex) skip the interactive setup and get bash-like globbing
-- `tmux`: default entry point, XDG configuration, platform overrides, and TPM declarations
+- `zsh`: environment, login PATH, interactive shell, and starship prompt
+- `tmux`: default entry point, XDG configuration, and TPM declarations
 - `nvim`: LazyVim configuration and lockfile
 - `ghostty`: macOS terminal key handling
 - `opencode`, `pi`: stable linked settings and themes
-- `agent-config`: curated Pi and Codex templates copied into mutable runtime directories
 - `git`: Git defaults and global ignores
 
-The installer backs up conflicting live files before applying links. TPM performs plugin installation after tmux configuration has been linked.
+The installer backs up conflicting live files before linking, then installs TPM plugins.

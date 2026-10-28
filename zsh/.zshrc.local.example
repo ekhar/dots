@@ -1,4 +1,4 @@
-# Machine-local settings. Copy to ~/.zshrc.local and chmod 600.
-# Keep this file silent because it loads before Powerlevel10k instant prompt.
+# Machine-local settings, loaded last by ~/.zshrc. Copy to ~/.zshrc.local and chmod 600.
 
 # export CLOUDFLARE_API_TOKEN=...
+# alias claude_work='CLAUDE_CONFIG_DIR="$HOME/.claude-work" claude'
