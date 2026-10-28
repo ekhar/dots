@@ -137,6 +137,7 @@ else
 fi
 
 # Safe defaults. Permission-bypassing agent modes are explicit opt-ins.
+alias python=python3
 alias ls=eza
 alias ll='eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions'
 alias nano=nvim

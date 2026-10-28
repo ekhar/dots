@@ -107,6 +107,7 @@ prepare_existing_configs() {
     local backup_dir
     backup_dir="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
     local paths=(
+        .zshenv
         .zshrc
         .zprofile
         .p10k.zsh
@@ -119,7 +120,7 @@ prepare_existing_configs() {
     )
 
     if [[ "$OS" == macos ]]; then
-        paths+=("Library/Application Support/com.mitchellh.ghostty/config")
+        paths+=("Library/Application Support/com.mitchellh.ghostty/config" .bashrc)
     fi
 
     prepare_directory .config/tmux tmux.conf "$backup_dir"
